@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xioverse AR</title>
+    <script src="https://cdn.jsdelivr.net/npm/aframe@1.2.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@googlemaps/three"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=WebXR"></script>
+</head>
+<body>
+    <a-scene arjs embedded vr-mode-ui="enabled: false">
+        <!-- The 3D Clockhead Model -->
+        <a-entity id="clockhead" gps-entity-place="latitude: 48.892737; longitude: 2.391849"
+                  gltf-model="clockhead.glb" scale="3 3 3">
+        </a-entity>
+    </a-scene>
+
+    <script>
+        // Load ARCore
+        function initAR() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    let userLat = position.coords.latitude;
+                    let userLon = position.coords.longitude;
+                    let arcLat = 48.892737;
+                    let arcLon = 2.391849;.
+
+                    let distance = getDistance(userLat, userLon, arcLat, arcLon);
+
+                    if (distance < 50) { // If user is within 50m of the Arc
+                        document.getElementById("clockhead").setAttribute("visible", "true");
+                    } else {
+                        alert("Get closer to the Arc de Triomphe to unlock the experience!");
+                    }
+                });
+            }
+        }
+
+        // Haversine Formula for Distance Calculation
+        function getDistance(lat1, lon1, lat2, lon2) {
+            function toRad(value) {
+                return (value * Math.PI) / 180;
+            }
+            let R = 6371e3; // Earth radius in meters
+            let dLat = toRad(lat2 - lat1);
+            let dLon = toRad(lon2 - lon1);
+            let a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                    Math.sin(dLon/2) * Math.sin(dLon/2);
+            let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        window.onload = initAR;
+    </script>
+</body>
+</html>
