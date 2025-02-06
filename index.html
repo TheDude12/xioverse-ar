@@ -12,19 +12,19 @@
     ></script>
   </head>
   <body>
-    <h1>Scan QR Code to See Clockhead in AR!</h1>
+    <h1>See Clockhead in AR!</h1>
 
     <!-- AR Display Area -->
     <model-viewer
       id="model-viewer"
-      src="clockhead.glb" <!-- Your 3D model file -->
+      src="clockhead.glb"  <!-- Replace with your actual 3D model file path -->
       alt="Clockhead 3D model"
       auto-rotate
       camera-controls
       ar
       ar-modes="scene-viewer quick-look"
     ></model-viewer>
- 
+
     <script>
       // Example function to set up ARCore features, if needed
       const modelViewer = document.querySelector("#model-viewer");
