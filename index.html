@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebAR Test</title>
+    <title>WebAR Debug</title>
     <script type="module" src="https://unpkg.com/@google/model-viewer@latest"></script>
 </head>
 <body>
@@ -21,8 +21,15 @@
 
     <script>
         const modelViewer = document.querySelector("#model-viewer");
+
+        modelViewer.addEventListener("error", (event) => {
+            console.error("Model Error:", event);
+            alert("Model failed to load. Check the console for errors.");
+        });
+
         modelViewer.addEventListener("load", () => {
             console.log("Model Loaded Successfully!");
+            alert("Model Loaded Successfully!");
         });
     </script>
 </body>
