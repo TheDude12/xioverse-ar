@@ -9,6 +9,7 @@
 </head>
 <body style="margin: 0; overflow: hidden;">
     <a-scene embedded arjs gps-camera="minAccuracy: 20">
+        <a-text id="gps-text" value="Getting GPS..." position="0 3 -5" color="white"></a-text>
         <a-text value="GPS is working!" position="0 2 -5"></a-text>
         <a-camera gps-camera rotation-reader></a-camera>
 
