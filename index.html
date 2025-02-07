@@ -6,9 +6,25 @@
     <title>Landmark-Based AR</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://rawgit.com/jeromeetienne/AR.js/1.7.2/aframe/build/aframe-ar.min.js"></script>
+    <style>
+        /* Ensure the full screen is used and the aspect ratio is correct */
+        body, html {
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        a-scene {
+            width: 100%;
+            height: 100%;
+        }
+        /* Ensures AR camera takes up the full screen with no zooming */
+        a-camera {
+            position: 0 0 0;
+        }
+    </style>
 </head>
-<body style="margin: 0; overflow: hidden;">
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+<body>
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best;">
         <!-- GPS Anchored Model -->
         <a-entity
             gps-entity-place="latitude: 33.87402; longitude: 35.52112"
