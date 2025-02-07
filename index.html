@@ -3,34 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebAR Debug</title>
-    <script type="module" src="https://unpkg.com/@google/model-viewer@latest"></script>
+    <title>Landmark-Based AR</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://rawgit.com/jeromeetienne/AR.js/1.7.2/aframe/build/aframe-ar.min.js"></script>
 </head>
-<body>
-    <h1>See Clockhead in AR!</h1>
+<body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs gps-camera="minAccuracy: 20">
+        <!-- GPS Anchored Model -->
+        <a-entity
+            gps-entity-place="latitude: 33.87402004378349; longitude: 35.5211233612933837.7749"
+            gltf-model="https://raw.githubusercontent.com/TheDude12/xioverse-ar/main/Burger.glb"
+            scale="1 1 1"
+            rotation="0 180 0"
+            position="0 0 0">
+        </a-entity>
 
-    <model-viewer 
-        id="model-viewer"
-        src="https://raw.githubusercontent.com/TheDude12/xioverse-ar/main/Burger.glb"
-        alt="Astronaut Model"
-        auto-rotate
-        camera-controls
-        ar
-        ar-modes="scene-viewer quick-look">
-    </model-viewer>
+        <!-- GPS Camera -->
+        <a-camera gps-camera rotation-reader></a-camera>
+    </a-scene>
 
     <script>
-        const modelViewer = document.querySelector("#model-viewer");
-
-        modelViewer.addEventListener("error", (event) => {
-            console.error("Model Error:", event);
-            alert("Model failed to load. Check the console for errors.");
-        });
-
-        modelViewer.addEventListener("load", () => {
-            console.log("Model Loaded Successfully!");
-            alert("Model Loaded Successfully!");
-        });
+        // Ensure GPS Permissions
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    console.log("User location:", position.coords.latitude, position.coords.longitude);
+                },
+                (error) => {
+                    console.error("Error getting location:", error);
+                    alert("Please enable GPS to see the AR model.");
+                }
+            );
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
     </script>
 </body>
 </html>
