@@ -1,40 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>WebAR Debug</title>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://rawgit.com/jeromeetienne/AR.js/1.7.2/aframe/build/aframe-ar.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AR with Three.js</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@google/model-viewer@latest"></script>
 </head>
 <body style="margin: 0; overflow: hidden;">
-    <a-scene embedded arjs gps-camera="minAccuracy: 20">
-        <a-text value="GPS is working!" position="0 2 -5"></a-text>
-        <a-camera gps-camera rotation-reader></a-camera>
 
-        <!-- Example Entity -->
-        <a-entity 
-            gps-entity-place="latitude: 33.87402; longitude: 35.52112" 
-            geometry="primitive: box" 
-            material="color: red" 
-            scale="1 1 1">
-        </a-entity>
-    </a-scene>
+<!-- 3D Burger model -->
+<model-viewer 
+  id="burger-model"
+  src="https://raw.githubusercontent.com/TheDude12/xioverse-ar/main/Burger.glb"
+  alt="Burger"
+  auto-rotate
+  camera-controls
+  ar
+  ar-modes="scene-viewer quick-look"
+  style="width: 100%; height: 100%;"
+></model-viewer>
 
-    <script>
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    console.log("User location:", position.coords.latitude, position.coords.longitude);
-                },
-                (error) => {
-                    console.error("Error getting location:", error);
-                    alert("Please enable GPS to see the AR model.");
-                }
-            );
+<script>
+  // Fixed location for the burger (latitude, longitude)
+  const targetLatitude = 33.873723;
+  const targetLongitude = 35.521269;
+
+  // Function to check user's location
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const userLatitude = position.coords.latitude;
+        const userLongitude = position.coords.longitude;
+
+        console.log(`User Location: Latitude ${userLatitude}, Longitude ${userLongitude}`);
+
+        // If user is close enough to target location, show the model
+        const distance = calculateDistance(userLatitude, userLongitude, targetLatitude, targetLongitude);
+        if (distance < 100) {  // within 100 meters
+          document.getElementById('burger-model').style.display = 'block';
         } else {
-            alert("Geolocation is not supported by this browser.");
+          alert("You are too far from the target location to view the model.");
         }
-    </script>
+      },
+      (error) => {
+        console.error("Geolocation Error:", error);
+        alert("Unable to retrieve your location.");
+      }
+    );
+  } else {
+    alert("Geolocation is not supported by your browser.");
+  }
+
+  // Haversine formula to calculate the distance between two GPS coordinates
+  function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Earth radius in kilometers
+    const dLat = degreesToRadians(lat2 - lat1);
+    const dLon = degreesToRadians(lon2 - lon1);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(degreesToRadians(lat1)) * Math.cos(degreesToRadians(lat2)) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in kilometers
+  }
+
+  function degreesToRadians(degrees) {
+    return degrees * (Math.PI / 180);
+  }
+</script>
+
 </body>
 </html>
