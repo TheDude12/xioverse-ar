@@ -2,31 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Basic AR Debug</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Landmark-Based AR</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://rawgit.com/jeromeetienne/AR.js/1.7.2/aframe/build/aframe-ar.min.js"></script>
-    <style>
-        body, html {
-            margin: 0;
-            height: 100%;
-            overflow: hidden;
-        }
-        a-scene {
-            width: 100%;
-            height: 100%;
-        }
-        a-camera {
-            position: 0 0 0;
-        }
-    </style>
 </head>
-<body>
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: true; trackingMethod: best;">
-        <!-- Simple text to confirm if GPS is working -->
-        <a-text value="GPS is working!" position="0 2 -5" id="gpsText"></a-text>
-
-        <!-- AR Camera with GPS Tracking -->
+<body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs gps-camera="minAccuracy: 20">
+        <a-text value="GPS is working!" position="0 2 -5"></a-text>
+        <a-entity
+            geometry="primitive: box"
+            material="color: red"
+            scale="1 1 1"
+            gps-entity-place="latitude: 33.87402; longitude: 35.52112">
+        </a-entity>
         <a-camera gps-camera rotation-reader></a-camera>
     </a-scene>
 
@@ -36,19 +26,14 @@
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     console.log("User location:", position.coords.latitude, position.coords.longitude);
-                    // Hide the text once GPS location is found
-                    document.querySelector('#gpsText').setAttribute('value', 'Location found!');
-                    document.querySelector('#gpsText').setAttribute('visible', 'false');
                 },
                 (error) => {
                     console.error("Error getting location:", error);
-                    // Display error message if GPS can't be retrieved
-                    document.querySelector('#gpsText').setAttribute('value', 'Unable to get GPS location.');
+                    alert("Please enable GPS to see the AR model.");
                 }
             );
         } else {
             alert("Geolocation is not supported by this browser.");
-            document.querySelector('#gpsText').setAttribute('value', 'Geolocation not supported.');
         }
     </script>
 </body>
