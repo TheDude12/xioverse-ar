@@ -12,17 +12,14 @@
         <a-text id="gps-text" value="Getting GPS..." position="0 3 -5" color="white"></a-text>
         <a-text value="GPS is working!" position="0 2 -5"></a-text>
 
-           <!-- Flashing Green Dots (Guide to Target Location) -->
-      <!-- Flashing Green Dots (Guide to Target Location) -->
+        <!-- Flashing Green Dots (Guide to Target Location) -->
         <a-entity 
             id="guidanceDots"
-            gps-entity-place="latitude: 33.873717; longitude: 35.521254"
             geometry="primitive: sphere; radius: 1" 
             material="color: green; opacity: 1"
-            visible="true"
+            visible="false"
             animation="property: material.opacity; from: 1; to: 0.2; dir: alternate; dur: 500; loop: true">
         </a-entity>
-
 
         <!-- "Box Here" Text (Hidden Initially) -->
         <a-text 
@@ -48,23 +45,8 @@
     </a-scene>
 
     <script>
-        // Function to Update Green Dots Position to Camera Height
-        function updateDotsPosition() {
-            let camera = document.querySelector("[gps-camera]");
-            let dots = document.querySelector("#guidanceDots");
-
-            if (camera && dots) {
-                // Get camera's current y position (height)
-                let cameraHeight = camera.object3D.position.y || 1.6; // Default to 1.6 meters if no value is found
-                dots.setAttribute("position", `0 ${cameraHeight} 0`);
-            }
-        }
-
-        // Run this function to update the dots position in sync with the camera
-        setInterval(updateDotsPosition, 100);  // Update every 100ms
-
-        // Function to Get Distance Between User & Target
-        function getDistance(lat1, lon1, lat2, lon2) {
+        // Function to Get Distance and Direction Between User & Target
+        function getDirection(lat1, lon1, lat2, lon2) {
             const R = 6371e3; // Earth's radius in meters
             const φ1 = lat1 * Math.PI / 180;
             const φ2 = lat2 * Math.PI / 180;
@@ -76,42 +58,62 @@
                       Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-            return R * c; // Distance in meters
+            const distance = R * c; // Distance in meters
+
+            const angle = Math.atan2(lon2 - lon1, lat2 - lat1) * (180 / Math.PI); // Direction in degrees
+
+            return { distance, angle };
         }
 
-        // Function to Check Distance and Update Visibility
-        function checkDistance() {
+        // Function to Show Green Dot in the Correct Screen Position (Top, Left, Right, Bottom)
+        function updateGreenDotPosition(angle) {
+            const dot = document.querySelector("#guidanceDots");
+
+            // If angle between -45 and 45 -> User needs to go forward (Top of the screen)
+            if (angle >= -45 && angle <= 45) {
+                dot.setAttribute("position", "0 1 -5"); // Top
+                dot.setAttribute("visible", "true");
+            }
+            // If angle between 45 and 135 -> User needs to go right (Right side of the screen)
+            else if (angle > 45 && angle <= 135) {
+                dot.setAttribute("position", "2 0 -5"); // Right
+                dot.setAttribute("visible", "true");
+            }
+            // If angle between -135 and -45 -> User needs to go left (Left side of the screen)
+            else if (angle >= -135 && angle < -45) {
+                dot.setAttribute("position", "-2 0 -5"); // Left
+                dot.setAttribute("visible", "true");
+            }
+            // If angle between 135 and 180 or -180 and -135 -> User needs to go backwards (Bottom of the screen)
+            else {
+                dot.setAttribute("position", "0 -1 -5"); // Bottom
+                dot.setAttribute("visible", "true");
+            }
+        }
+
+        // Function to Update GPS Location & Green Dot Direction
+        function checkDistanceAndDirection() {
             navigator.geolocation.getCurrentPosition((position) => {
                 const userLat = position.coords.latitude;
                 const userLon = position.coords.longitude;
 
-                const targetLat = 33.873717;
-                const targetLon = 35.521254;
+                const targetLat = 33.873717; // Target Latitude
+                const targetLon = 35.521254; // Target Longitude
 
-                const distance = getDistance(userLat, userLon, targetLat, targetLon);
-                console.log("Distance to box:", distance, "meters");
+                const { angle } = getDirection(userLat, userLon, targetLat, targetLon);
+                console.log("Direction angle:", angle);
 
-                const dots = document.querySelector("#guidanceDots");
-                const boxText = document.querySelector("#boxText");
-                const box = document.querySelector("#targetBox");
-
-                if (distance < 3) {
-                    dots.setAttribute("visible", "false");
-                    boxText.setAttribute("visible", "true");
-                    box.setAttribute("visible", "true");
-                } else {
-                    dots.setAttribute("visible", "true");
-                    boxText.setAttribute("visible", "false");
-                    box.setAttribute("visible", "false");
-                }
+                // Show the correct green dot location based on direction
+                updateGreenDotPosition(angle);
             });
         }
 
-        // Continuously Update User GPS Location & Box Height
+        // Continuously Check User's Location and Direction
+        setInterval(checkDistanceAndDirection, 1000);
+
+        // Function to Update User's GPS Position (Display text)
         function updateUI() {
             let camera = document.querySelector("[gps-camera]");
-            let box = document.getElementById("targetBox");
-
             if (navigator.geolocation) {
                 navigator.geolocation.watchPosition(
                     (position) => {
@@ -121,12 +123,6 @@
 
                         // Update on-screen GPS text
                         document.getElementById("gps-text").setAttribute("value", `Lat: ${lat}, Lon: ${lon}`);
-
-                        // Adjust box height to match camera height
-                        if (camera && box) {
-                            let cameraHeight = camera.object3D.position.y || 1.6; // Default height if not detected
-                            box.setAttribute("position", `0 ${cameraHeight} 0`);
-                        }
                     },
                     (error) => {
                         console.error("Error getting location:", error);
@@ -139,13 +135,8 @@
             }
         }
 
-        // Start GPS Tracking and Box Height Adjustment
+        // Start GPS Tracking
         updateUI();
-
-        // Run Distance Check Every Second
-        setInterval(checkDistance, 1000);
-
     </script>
-
 </body>
 </html>
