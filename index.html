@@ -44,6 +44,37 @@
         <a-camera gps-camera rotation-reader look-controls="enabled: false" position="0 0 0"></a-camera>
 
     </a-scene>
+ <script>
+        if (navigator.geolocation) {
+            // Ensure the browser supports geolocation
+            navigator.geolocation.watchPosition(
+                (position) => {
+                    // Get the current latitude and longitude
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
 
+                    // Log the location for debugging
+                    console.log("Latitude:", latitude, "Longitude:", longitude);
+
+                    // Get the text element to update
+                    const gpsText = document.getElementById("gps-text");
+
+                    // Update the text to show the current GPS coordinates
+                    gpsText.setAttribute("value", `Lat: ${latitude.toFixed(4)} \nLon: ${longitude.toFixed(4)}`);
+                },
+                (error) => {
+                    console.error("Error getting location:", error);
+                    alert("Please enable GPS to see the AR model.");
+                },
+                {
+                    enableHighAccuracy: true, // Try to get the most accurate location
+                    maximumAge: 10000, // Cache the location for up to 10 seconds
+                    timeout: 5000, // Timeout if no location is received within 5 seconds
+                }
+            );
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    </script>
 </body>
 </html>
