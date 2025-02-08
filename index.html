@@ -60,7 +60,8 @@
                     const gpsText = document.getElementById("gps-text");
 
                     // Update the text to show the current GPS coordinates
-                    gpsText.setAttribute("value", Lat: ${latitude.toFixed(4)} \nLon: ${longitude.toFixed(4)});
+                    gpsText.setAttribute("value", `Lat: ${latitude.toFixed(4)} \nLon: ${longitude.toFixed(4)}`);
+                    
                 },
                 (error) => {
                     console.error("Error getting location:", error);
