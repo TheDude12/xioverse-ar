@@ -13,14 +13,15 @@
         <a-text value="GPS is working!" position="0 2 -5"></a-text>
 
            <!-- Flashing Green Dots (Guide to Target Location) -->
+      <!-- Flashing Green Dots (Guide to Target Location) -->
         <a-entity 
-    id="guidanceDots"
-    gps-entity-place="latitude: 33.873717; longitude: 35.521254"
-    geometry="primitive: sphere; radius: 0.5" 
-    material="color: green; opacity: 1"
-    visible="true"
-    animation="property: material.opacity; from: 1; to: 0.2; dir: alternate; dur: 500; loop: true">
-</a-entity>
+            id="guidanceDots"
+            gps-entity-place="latitude: 33.873717; longitude: 35.521254"
+            geometry="primitive: sphere; radius: 1" 
+            material="color: green; opacity: 1"
+            visible="true"
+            animation="property: material.opacity; from: 1; to: 0.2; dir: alternate; dur: 500; loop: true">
+        </a-entity>
 
 
         <!-- "Box Here" Text (Hidden Initially) -->
@@ -47,19 +48,20 @@
     </a-scene>
 
     <script>
-    setTimeout(() => {
-    let guidanceDots = document.querySelector("#guidanceDots");
+        // Function to Update Green Dots Position to Camera Height
+        function updateDotsPosition() {
+            let camera = document.querySelector("[gps-camera]");
+            let dots = document.querySelector("#guidanceDots");
 
-    if (guidanceDots) {
-        alert("✅ guidanceDots entity found!");
-    } else {
-        alert("❌ guidanceDots entity NOT found!");
-    }
+            if (camera && dots) {
+                // Get camera's current y position (height)
+                let cameraHeight = camera.object3D.position.y || 1.6; // Default to 1.6 meters if no value is found
+                dots.setAttribute("position", `0 ${cameraHeight} 0`);
+            }
+        }
 
-    let position = guidanceDots.getAttribute("gps-entity-place");
-    alert("📍 Green dots GPS position: " + JSON.stringify(position));
-}, 5000);
-
+        // Run this function to update the dots position in sync with the camera
+        setInterval(updateDotsPosition, 100);  // Update every 100ms
 
         // Function to Get Distance Between User & Target
         function getDistance(lat1, lon1, lat2, lon2) {
@@ -142,6 +144,7 @@
 
         // Run Distance Check Every Second
         setInterval(checkDistance, 1000);
+
     </script>
 
 </body>
