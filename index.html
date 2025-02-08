@@ -33,7 +33,8 @@
         </a-text>
 
         <!-- Red Square (1 Meter in Front) -->
-        <a-plane 
+       <a-plane 
+            id="red-square" 
             position="0 0 -10"  
             width="0.1" 
             height="0.1" 
@@ -76,6 +77,72 @@
         } else {
             alert("Geolocation is not supported by this browser.");
         }
+    </script>
+     <script>
+        let currentLat, currentLon;
+
+        // Watch the GPS position
+        if (navigator.geolocation) {
+            navigator.geolocation.watchPosition(
+                (position) => {
+                    currentLat = position.coords.latitude;
+                    currentLon = position.coords.longitude;
+
+                    // Log the location for debugging
+                    console.log("Latitude:", currentLat, "Longitude:", currentLon);
+
+                    // Update the GPS text element
+                    const gpsText = document.getElementById("gps-text");
+                    gpsText.setAttribute("value", `Lat: ${currentLat.toFixed(4)} \nLon: ${currentLon.toFixed(4)}`);
+                },
+                (error) => {
+                    console.error("Error getting location:", error);
+                    alert("Please enable GPS to see the AR model.");
+                },
+                {
+                    enableHighAccuracy: true,
+                    maximumAge: 10000,
+                    timeout: 5000,
+                }
+            );
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+
+        // Get device orientation (alpha = compass direction)
+        let alpha = 0;  // Default value for alpha (compass direction)
+
+        window.addEventListener('deviceorientation', (event) => {
+            alpha = event.alpha;  // Get the current compass direction
+        });
+
+        // Function to move the square based on direction
+        function moveSquare() {
+            if (currentLat === undefined || currentLon === undefined) {
+                return; // Don't move the square until we have GPS coordinates
+            }
+
+            const distance = 5;  // Distance in meters
+
+            // Calculate direction in radians
+            const directionInRadians = (alpha * Math.PI) / 180;
+
+            // Calculate the changes in latitude and longitude
+            const deltaLat = distance * Math.cos(directionInRadians) / 111320;  // Latitude change per meter
+            const deltaLon = distance * Math.sin(directionInRadians) / (40008000 * Math.cos(currentLat * Math.PI / 180) / 360);  // Longitude change per meter
+
+            // New coordinates based on the direction
+            const newLat = currentLat + deltaLat;
+            const newLon = currentLon + deltaLon;
+
+            // Move the red square to the new position
+            const square = document.getElementById('red-square');
+            square.setAttribute('position', `${newLon} 0 ${newLat}`);
+            console.log(`Moved square to Lat: ${newLat}, Lon: ${newLon}`);
+        }
+
+        // Continuously move the square every 2 seconds
+        setInterval(moveSquare, 2000);  // Move square every 2 seconds
     </script>
 </body>
 </html>
