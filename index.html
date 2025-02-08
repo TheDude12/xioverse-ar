@@ -17,20 +17,21 @@
 <body>
     <a-scene embedded arjs gps-camera="minAccuracy: 20">
 
+        <!-- GPS Text -->
         <a-text 
             id="gps-text" 
             value="Getting GPS..." 
-            position="-0.5 1 -2"  <!-- Moves text slightly to the left -->
+            position="-0.5 1 -2"  
             width="1"   
             align="center"        
             color="white">
         </a-text>
 
-
         <a-text value="GPS is working!" position="-0.5 0 -2"></a-text>
+
         <!-- Red Square (1 Meter in Front) -->
         <a-plane 
-            position="0 1 -1"  <!-- 1 meter in front -->
+            position="0 1 -1"  
             width="1" 
             height="1" 
             color="red">
@@ -38,6 +39,7 @@
 
         <!-- Fixed Camera (Prevents Dragging) -->
         <a-camera gps-camera rotation-reader look-controls="enabled: false" position="0 0 0"></a-camera>
+
     </a-scene>
 </body>
 </html>
