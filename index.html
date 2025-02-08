@@ -11,7 +11,23 @@
     <a-scene embedded arjs gps-camera="minAccuracy: 20">
         <a-text id="gps-text" value="Getting GPS..." position="0 3 -5" color="white"></a-text>
         <a-text value="GPS is working!" position="0 2 -5"></a-text>
-       <a-entity 
+        <!-- Flashing Green Dots (Guide to Target Location) -->
+    <a-entity 
+        id="guidanceDots"
+        gps-entity-place="latitude: 33.873717; longitude: 35.521254"
+        geometry="primitive: sphere; radius: 0.2" 
+        material="color: green; opacity: 0.8"
+        animation="property: material.opacity; from: 0; to: 1; dir: alternate; dur: 500; loop: true">
+    </a-entity>
+  <!-- Hidden "Box Here" Text -->
+    <a-text 
+        id="boxText"
+        value="Box Here" 
+        position="0 2 -5" 
+        visible="false"
+        color="white">
+    </a-text>
+<a-entity 
        gps-entity-place="latitude: 33.873717; longitude: 35.521254" 
        geometry="primitive: box" 
         material="color: red"
