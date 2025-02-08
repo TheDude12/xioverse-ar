@@ -21,7 +21,7 @@
         <a-text 
             id="gps-text" 
             value="Getting GPS..." 
-            position="-1 0 -2"  
+            position="-1 1 -8"  
             scale="0.5 0.5 0.5"   
             color="white">
         </a-text>
@@ -45,20 +45,5 @@
 
     </a-scene>
 
-    <script>
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    console.log("User location:", position.coords.latitude, position.coords.longitude);
-                },
-                (error) => {
-                    console.error("Error getting location:", error);
-                    alert("Please enable GPS to see the AR model.");
-                }
-            );
-        } else {
-            alert("Geolocation is not supported by this browser.");
-        }
-    </script>
 </body>
 </html>
