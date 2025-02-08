@@ -47,18 +47,19 @@
     </a-scene>
 
     <script>
-        setTimeout(() => {
+    setTimeout(() => {
     let guidanceDots = document.querySelector("#guidanceDots");
 
     if (guidanceDots) {
-        console.log("guidanceDots entity found.");
+        alert("✅ guidanceDots entity found!");
     } else {
-        console.error("guidanceDots entity NOT found.");
+        alert("❌ guidanceDots entity NOT found!");
     }
 
     let position = guidanceDots.getAttribute("gps-entity-place");
-    console.log("Green dots GPS position:", position);
+    alert("📍 Green dots GPS position: " + JSON.stringify(position));
 }, 5000);
+
 
         // Function to Get Distance Between User & Target
         function getDistance(lat1, lon1, lat2, lon2) {
