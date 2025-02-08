@@ -17,26 +17,24 @@
 <body>
     <a-scene embedded arjs gps-camera="minAccuracy: 20">
 
-  <a-text 
-    id="gps-text" 
-    value="Getting GPS..." 
-    position="-0.5 0 -2"  <!-- Moves text slightly to the left -->
-    width="0.5"   <!-- Reduces text size -->
-    align="center"        <!-- Ensures proper alignment -->
-    color="white">
-</a-text>
+        <a-text 
+            id="gps-text" 
+            value="Getting GPS..." 
+            position="-0.5 1 -2"  <!-- Moves text slightly to the left -->
+            width="1"   
+            align="center"        
+            color="white">
+        </a-text>
 
 
         <a-text value="GPS is working!" position="-0.5 0 -2"></a-text>
-
-        <!-- Flashing Green Dots -->
-        <a-entity 
-            id="guidanceDots"
-            geometry="primitive: sphere; radius: 1" 
-            material="color: green; opacity: 1"
-            visible="false"
-            animation="property: material.opacity; from: 1; to: 0.2; dir: alternate; dur: 500; loop: true">
-        </a-entity>
+        <!-- Red Square (1 Meter in Front) -->
+        <a-plane 
+            position="0 1 -1"  <!-- 1 meter in front -->
+            width="1" 
+            height="1" 
+            color="red">
+        </a-plane>
 
         <!-- Fixed Camera (Prevents Dragging) -->
         <a-camera gps-camera rotation-reader look-controls="enabled: false" position="0 0 0"></a-camera>
