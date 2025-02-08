@@ -15,8 +15,8 @@
     </style>
 </head>
 <body>
-    <a-scene embedded arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false; location-based: true;">
-
+    <a-scene embedded arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: true; location-based: true;">
+        
         <!-- GPS Text -->
         <a-text id="gps-text" value="Getting GPS..." position="-1 1 -8" scale="0.5 0.5 0.5" color="white"></a-text>
 
@@ -34,22 +34,32 @@
     </a-scene>
 
     <script>
+        // Debugging: Check if AR.js is loading properly
+        alert('AR.js is loading...');
+
         if (navigator.geolocation) {
+            // Debugging: Check if GPS is available
+            alert('GPS is available, waiting for location data...');
+            
             navigator.geolocation.watchPosition(
                 (position) => {
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
 
-                    // Log the location for debugging
+                    // Debugging: Log and display the obtained coordinates
                     console.log("Latitude:", latitude, "Longitude:", longitude);
+                    alert(`GPS Location Obtained: Lat = ${latitude.toFixed(4)}, Lon = ${longitude.toFixed(4)}`);
 
                     // Update the text to show the current GPS coordinates
                     const gpsText = document.getElementById("gps-text");
                     gpsText.setAttribute("value", `Lat: ${latitude.toFixed(4)} \nLon: ${longitude.toFixed(4)}`);
+                    
+                    // Debugging: Confirm text is updated
+                    alert('Updated GPS coordinates on screen.');
                 },
                 (error) => {
                     console.error("Error getting location:", error);
-                    alert("Please enable GPS to see the AR model.");
+                    alert("Error with GPS, please enable GPS.");
                 },
                 {
                     enableHighAccuracy: true,
@@ -60,6 +70,11 @@
         } else {
             alert("Geolocation is not supported by this browser.");
         }
+
+        // Debugging: Ensure AR.js scene is being created
+        window.onload = function() {
+            alert("AR.js scene loaded. Please move your device.");
+        };
     </script>
 </body>
 </html>
