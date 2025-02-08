@@ -44,5 +44,21 @@
         <a-camera gps-camera rotation-reader look-controls="enabled: false" position="0 0 0"></a-camera>
 
     </a-scene>
+
+    <script>
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    console.log("User location:", position.coords.latitude, position.coords.longitude);
+                },
+                (error) => {
+                    console.error("Error getting location:", error);
+                    alert("Please enable GPS to see the AR model.");
+                }
+            );
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    </script>
 </body>
 </html>
