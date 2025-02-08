@@ -14,12 +14,14 @@
 
            <!-- Flashing Green Dots (Guide to Target Location) -->
         <a-entity 
-            id="guidanceDots"
-            gps-entity-place="latitude: 33.873717; longitude: 35.521254"
-            geometry="primitive: sphere; radius: 0.2" 
-            material="color: green; opacity: 0.8"
-            animation="property: material.opacity; from: 0; to: 1; dir: alternate; dur: 500; loop: true">
-        </a-entity>
+    id="guidanceDots"
+    gps-entity-place="latitude: 33.873717; longitude: 35.521254"
+    geometry="primitive: sphere; radius: 0.5" 
+    material="color: green; opacity: 1"
+    visible="true"
+    animation="property: material.opacity; from: 1; to: 0.2; dir: alternate; dur: 500; loop: true">
+</a-entity>
+
 
         <!-- "Box Here" Text (Hidden Initially) -->
         <a-text 
@@ -45,6 +47,19 @@
     </a-scene>
 
     <script>
+        setTimeout(() => {
+    let guidanceDots = document.querySelector("#guidanceDots");
+
+    if (guidanceDots) {
+        console.log("guidanceDots entity found.");
+    } else {
+        console.error("guidanceDots entity NOT found.");
+    }
+
+    let position = guidanceDots.getAttribute("gps-entity-place");
+    console.log("Green dots GPS position:", position);
+}, 5000);
+
         // Function to Get Distance Between User & Target
         function getDistance(lat1, lon1, lat2, lon2) {
             const R = 6371e3; // Earth's radius in meters
