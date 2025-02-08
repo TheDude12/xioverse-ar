@@ -11,10 +11,28 @@
             margin: 0;
             overflow: hidden;
             touch-action: none;
+            font-family: Arial, sans-serif;
+        }
+        #debug-log {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            max-width: 90%;
+            overflow-wrap: break-word;
         }
     </style>
 </head>
 <body>
+    <!-- Debug Log Box -->
+    <div id="debug-log">
+        <p>Loading AR.js...</p>
+    </div>
+
     <a-scene embedded arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: true; location-based: true;">
         
         <!-- GPS Text -->
@@ -34,12 +52,18 @@
     </a-scene>
 
     <script>
-        // Debugging: Check if AR.js is loading properly
-        alert('AR.js is loading...');
+        // Function to log messages to the debug log on the page
+        function logDebugMessage(message) {
+            const debugLog = document.getElementById('debug-log');
+            debugLog.innerHTML += `<p>${message}</p>`;
+        }
+
+        // Debugging: Log that AR.js is loading
+        logDebugMessage('AR.js is loading...');
 
         if (navigator.geolocation) {
-            // Debugging: Check if GPS is available
-            alert('GPS is available, waiting for location data...');
+            // Debugging: Log if GPS is available
+            logDebugMessage('GPS is available, waiting for location data...');
             
             navigator.geolocation.watchPosition(
                 (position) => {
@@ -47,19 +71,18 @@
                     const longitude = position.coords.longitude;
 
                     // Debugging: Log and display the obtained coordinates
-                    console.log("Latitude:", latitude, "Longitude:", longitude);
-                    alert(`GPS Location Obtained: Lat = ${latitude.toFixed(4)}, Lon = ${longitude.toFixed(4)}`);
-
+                    logDebugMessage("Latitude: " + latitude + " Longitude: " + longitude);
+                    
                     // Update the text to show the current GPS coordinates
                     const gpsText = document.getElementById("gps-text");
                     gpsText.setAttribute("value", `Lat: ${latitude.toFixed(4)} \nLon: ${longitude.toFixed(4)}`);
                     
                     // Debugging: Confirm text is updated
-                    alert('Updated GPS coordinates on screen.');
+                    logDebugMessage('Updated GPS coordinates on screen.');
                 },
                 (error) => {
                     console.error("Error getting location:", error);
-                    alert("Error with GPS, please enable GPS.");
+                    logDebugMessage("Error with GPS, please enable GPS.");
                 },
                 {
                     enableHighAccuracy: true,
@@ -68,12 +91,12 @@
                 }
             );
         } else {
-            alert("Geolocation is not supported by this browser.");
+            logDebugMessage("Geolocation is not supported by this browser.");
         }
 
         // Debugging: Ensure AR.js scene is being created
         window.onload = function() {
-            alert("AR.js scene loaded. Please move your device.");
+            logDebugMessage("AR.js scene loaded. Please move your device.");
         };
     </script>
 </body>
