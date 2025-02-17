@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>WebAR Debug</title>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://rawgit.com/jeromeetienne/AR.js/1.7.2/aframe/build/aframe-ar.js"></script>
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -33,20 +33,21 @@
         <p>Loading AR.js...</p>
     </div>
 
-    <a-scene embedded arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: true; location-based: true;">
-        
-        <!-- GPS Text -->
+    <a-scene
+        embedded
+        arjs="sourceType: webcam; debugUIEnabled: true; location-based: true;"
+        vr-mode-ui="enabled: false"
+    >
+        <!-- GPS Debugging Text -->
         <a-text id="gps-text" value="Getting GPS..." position="-1 1 -8" scale="0.5 0.5 0.5" color="white"></a-text>
 
-        <!-- Red Square at a fixed GPS location (33.873717, 35.521254) -->
-        <a-entity gps-projected-entity-place 
-                  latitude="33.873999" 
-                  longitude="35.521648" 
-                  <a-plane width="1" height="1" color="red"></a-plane>
+        <!-- Geolocated Entity (Red Square) -->
+        <a-entity gps-new-entity-place="latitude: 33.873999; longitude: 35.521648">
+            <a-plane width="1" height="1" color="red"></a-plane>
         </a-entity>
 
-        <!-- Fixed Camera (Prevents Dragging) -->
-        <a-camera gps-camera rotation-reader look-controls="enabled: false" position="0 0 0"></a-camera>
+        <!-- Fixed Camera -->
+        <a-camera gps-new-camera="gpsMinDistance: 5"></a-camera>
 
     </a-scene>
 
@@ -57,11 +58,9 @@
             debugLog.innerHTML += `<p>${message}</p>`;
         }
 
-        // Debugging: Log that AR.js is loading
         logDebugMessage('AR.js is loading...');
 
         if (navigator.geolocation) {
-            // Debugging: Log if GPS is available
             logDebugMessage('GPS is available, waiting for location data...');
             
             navigator.geolocation.watchPosition(
@@ -69,14 +68,12 @@
                     const latitude = position.coords.latitude;
                     const longitude = position.coords.longitude;
 
-                    // Debugging: Log and display the obtained coordinates
-                    logDebugMessage("Latitude: " + latitude + " Longitude: " + longitude);
+                    logDebugMessage(`Latitude: ${latitude}, Longitude: ${longitude}`);
                     
-                    // Update the text to show the current GPS coordinates
+                    // Update on-screen GPS coordinates
                     const gpsText = document.getElementById("gps-text");
                     gpsText.setAttribute("value", `Lat: ${latitude.toFixed(4)} \nLon: ${longitude.toFixed(4)}`);
-                    
-                    // Debugging: Confirm text is updated
+
                     logDebugMessage('Updated GPS coordinates on screen.');
                 },
                 (error) => {
@@ -93,7 +90,6 @@
             logDebugMessage("Geolocation is not supported by this browser.");
         }
 
-        // Debugging: Ensure AR.js scene is being created
         window.onload = function() {
             logDebugMessage("AR.js scene loaded. Please move your device.");
         };
