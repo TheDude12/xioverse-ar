@@ -1,98 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>WebAR Debug</title>
-    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.min.js"></script>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            touch-action: none;
-            font-family: Arial, sans-serif;
-        }
-        #debug-log {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: white;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 14px;
-            max-width: 90%;
-            overflow-wrap: break-word;
-        }
-    </style>
-</head>
-<body>
-    <!-- Debug Log Box -->
-    <div id="debug-log">
-        <p>Loading AR.js...</p>
-    </div>
-
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>AR.js Location-Based Example</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+  </head>
+  <body style="margin: 0; overflow: hidden;">
     <a-scene
-        embedded
-        arjs="sourceType: webcam; debugUIEnabled: true; location-based: true;"
-        vr-mode-ui="enabled: false"
+      vr-mode-ui="enabled: false"
+      embedded
+      arjs="sourceType: webcam; debugUIEnabled: false;"
     >
-        <!-- GPS Debugging Text -->
-        <a-text id="gps-text" value="Getting GPS..." position="-1 1 -8" scale="0.5 0.5 0.5" color="white"></a-text>
+      <!-- Add a 3D object at a specific location -->
+      <a-entity
+        gltf-model="https://github.com/TheDude12/xioverse-ar/blob/main/Burger.glb"
+        gps-entity-place="latitude: 33.873999; longitude: 35.521648"
+        scale="5 5 5"
+      ></a-entity>
 
-        <!-- Geolocated Entity (Red Square) -->
-        <a-entity gps-new-entity-place="latitude: 33.873999; longitude: 35.521648">
-            <a-plane width="1" height="1" color="red"></a-plane>
-        </a-entity>
-
-        <!-- Fixed Camera -->
-        <a-camera gps-new-camera="gpsMinDistance: 5"></a-camera>
-
+      <!-- Camera and AR.js setup -->
+      <a-camera gps-camera rotation-reader></a-camera>
     </a-scene>
-
-    <script>
-        // Function to log messages to the debug log on the page
-        function logDebugMessage(message) {
-            const debugLog = document.getElementById('debug-log');
-            debugLog.innerHTML += `<p>${message}</p>`;
-        }
-
-        logDebugMessage('AR.js is loading...');
-
-        if (navigator.geolocation) {
-            logDebugMessage('GPS is available, waiting for location data...');
-            
-            navigator.geolocation.watchPosition(
-                (position) => {
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
-
-                    logDebugMessage(`Latitude: ${latitude}, Longitude: ${longitude}`);
-                    
-                    // Update on-screen GPS coordinates
-                    const gpsText = document.getElementById("gps-text");
-                    gpsText.setAttribute("value", `Lat: ${latitude.toFixed(4)} \nLon: ${longitude.toFixed(4)}`);
-
-                    logDebugMessage('Updated GPS coordinates on screen.');
-                },
-                (error) => {
-                    console.error("Error getting location:", error);
-                    logDebugMessage("Error with GPS, please enable GPS.");
-                },
-                {
-                    enableHighAccuracy: true,
-                    maximumAge: 10000,
-                    timeout: 5000,
-                }
-            );
-        } else {
-            logDebugMessage("Geolocation is not supported by this browser.");
-        }
-
-        window.onload = function() {
-            logDebugMessage("AR.js scene loaded. Please move your device.");
-        };
-    </script>
-</body>
-</html>
+  </body>
